@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react'
-import { useSetRecoilState } from 'recoil'
-import { clickedTodoState } from '../store/todo'
+import React, { useCallback, useEffect } from 'react'
+import { useRecoilState, useSetRecoilState } from 'recoil'
+import { clickedTodoState, todoState } from '../store/todo'
 import styled from 'styled-components'
 
 const Item = styled.li`
@@ -15,8 +15,17 @@ const Item = styled.li`
   cursor: pointer;
 `;
 
-const Todo = ({ todo }) => {
+const Todo = ({ todo: { id, title, description } }) => {
+  const [todo, setTodo] = useRecoilState(todoState(id))
   const setClickedTodo = useSetRecoilState(clickedTodoState)
+
+  useEffect(() => {
+    setTodo(prev => ({
+      ...prev,
+      title,
+      description
+    }))
+  }, [title, description, setTodo])
 
   const handleClickTodo = useCallback(() => {
     setClickedTodo(todo)

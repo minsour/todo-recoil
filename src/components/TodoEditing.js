@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { useRecoilValue, useRecoilState } from 'recoil'
-import { clickedTodoState, todoListState } from '../store/todo'
+import { clickedTodoState, todoState } from '../store/todo'
 import styled from 'styled-components'
 
 const EditingWrapper = styled.div`
@@ -48,8 +48,8 @@ const EditButton = styled.button`
 `;
 
 const TodoEditing = () => {
-  const todo = useRecoilValue(clickedTodoState)
-  const [todoList, setTodoList] = useRecoilState(todoListState)
+  const clickedTodo = useRecoilValue(clickedTodoState)
+  const [todo, setTodo] = useRecoilState(todoState(clickedTodo ? clickedTodo.id : null))
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   
@@ -70,17 +70,14 @@ const TodoEditing = () => {
   ), [])
 
   const handleEditTodo = useCallback(() => {
-    const index = todoList.findIndex(item => item.id  === todo.id)
-    const newTodo = { ...todoList[index], title, description }
+    setTodo(prevTodo => ({
+      ...prevTodo,
+      title,
+      description
+    }))
+  }, [title, description, setTodo])
 
-    setTodoList(prevTodos => [
-      ...prevTodos.slice(0, index),
-      newTodo,
-      ...prevTodos.slice(index + 1)
-    ])
-  }, [todoList, title, description, todo, setTodoList])
-
-  if (!todo) {
+  if (!clickedTodo) {
     return null
   }
 

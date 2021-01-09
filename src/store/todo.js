@@ -1,10 +1,20 @@
-import { atom } from 'recoil'
+import { atom, atomFamily } from 'recoil'
+
+const getTodo = (id) => ({
+  id,
+  title: '',
+  description: ''
+})
+
+export const todoState = atomFamily({
+  key: 'todoState',
+  default: id => getTodo(id)
+})
 
 export const clickedTodoState = atom({
   key: 'clickedTodoState',
   default: null
 })
-
 
 export const todoListState = atom({
   key: 'todoListState',
