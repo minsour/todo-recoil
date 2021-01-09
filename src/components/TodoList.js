@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { Suspense, useCallback } from 'react'
 import { useRecoilValue } from 'recoil'
 import styled from 'styled-components'
 import Todo from './Todo'
@@ -9,14 +9,23 @@ const List = styled.ul`
   padding: 0;
 `;
 
-const TodoList = () => {
-  const todoList = useRecoilValue(todoListState)
+const AsyncTodoList = () => {
+  const todoList = useRecoilValue(todoListState({ page: 0, size: 5 }))
   const renderTodos = useCallback(todo => <Todo key={todo.id} todo={todo} />, [])
-
+  
   return (
     <List>
       {todoList.map(renderTodos)}
     </List>
+  )
+}
+
+const TodoList = () => {
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AsyncTodoList />
+    </Suspense>
   )
 }
 
